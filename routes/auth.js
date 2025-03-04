@@ -18,7 +18,7 @@ const roleMiddleware = (roles) => {
   };
 };
 
-// ✅ Signup Route
+// Signup Route
 router.post('/signup', [
   check('name', 'Name is required').not().isEmpty(),
   check('email', 'Enter a valid email').isEmail(),
@@ -27,7 +27,7 @@ router.post('/signup', [
   const errors = validationResult(req);
   if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
 
-  const { name, email, password, role } = req.body; // Role added
+  const { name, email, password, role } = req.body; 
 
   try {
     let user = await User.findOne({ email });
@@ -40,7 +40,7 @@ router.post('/signup', [
       name, 
       email, 
       password: hashedPassword, 
-      role: role || 'user' // ✅ Default role is "user"
+      role: role || 'user' 
     });
 
     await user.save();
@@ -54,7 +54,7 @@ router.post('/signup', [
   }
 });
 
-// ✅ Login Route
+//  Login Route
 router.post('/login', [
   check('email', 'Enter a valid email').isEmail(),
   check('password', 'Password is required').exists()
@@ -93,17 +93,17 @@ router.post('/forgot-password', async (req, res) => {
     res.json({ msg: 'Password reset email sent' });
   });
 
-// ✅ Protected Route (Only logged-in users)
+// Protected Route (Only logged-in users)
 router.get('/protected', authMiddleware, (req, res) => {
   res.json({ msg: 'This is a protected route', user: req.user });
 });
 
-// ✅ Admin-Only Route
+// Admin-Only Route
 router.get('/admin', authMiddleware, roleMiddleware(['admin']), (req, res) => {
   res.json({ msg: 'Admin access granted' });
 });
 
-// ✅ Route for both User & Admin
+// Route for both User & Admin
 router.get('/dashboard', authMiddleware, roleMiddleware(['user', 'admin']), (req, res) => {
   res.json({ msg: `Welcome, ${req.user.role}` });
 });
